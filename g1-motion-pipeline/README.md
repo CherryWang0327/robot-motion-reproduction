@@ -58,11 +58,13 @@ Videos are designed for manual playback; the page should load media only when th
 
 ## Demo videos
 
-The following videos are original outputs from one completed offline run (`march8`). They demonstrate the representation chain from reconstructed human motion, to retargeted G1 reference motion, to policy tracking.
+The following videos are original outputs from one completed offline run (`march8`). The animated previews are intentionally lightweight because GitHub does not reliably inline repository MP4 files. Click a preview to open its original MP4.
 
-- [GVHMR: world-space human-motion reconstruction](assets/demo/gvhmr_world.mp4)
-- [GMR: native Unitree G1 reference-motion replay](assets/demo/gmr_g1.mp4)
-- [WBT: pretrained-policy tracking replay](assets/demo/wbt_tracking.mp4)
+| GVHMR world-space reconstruction | Native GMR G1 reference replay | WBT policy tracking replay |
+|---|---|---|
+| [![GVHMR world-space reconstruction](assets/demo/gvhmr_world.gif)](assets/demo/gvhmr_world.mp4) | [![Native GMR G1 reference replay](assets/demo/gmr_g1.gif)](assets/demo/gmr_g1.mp4) | [![WBT policy tracking replay](assets/demo/wbt_tracking.gif)](assets/demo/wbt_tracking.mp4) |
+
+Together they demonstrate the representation chain from reconstructed human motion, to retargeted G1 reference motion, to policy tracking.
 
 ## Run directory contract
 
@@ -109,6 +111,8 @@ python -m server.app --host 127.0.0.1 --port 8000
 ```
 
 Open `http://127.0.0.1:8000` and upload a video. The pipeline worker is intentionally local to the GPU/runtime machine.
+
+For the research-first command-line workflow, see the [Manual Reproduction Guide](docs/manual-reproduction.md). For the upload-to-approval web workflow, see [Web Console and Automation Architecture](docs/web-console.md).
 
 ## CLI examples
 
