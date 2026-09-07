@@ -1,0 +1,15 @@
+# Copy to pipeline.yaml on the Unitree machine and edit local paths. Do not
+# commit credentials, private model weights, or robot network addresses.
+projects:
+  gvhmr: /home/unitree/projects/GVHMR
+  gmr: /home/unitree/projects/GMR
+  protomotions: /home/unitree/projects/ProtoMotions
+  whole_body_tracking: /home/unitree/projects/whole_body_tracking
+environments:
+  gvhmr: gvhmr5070
+  gmr: gmr
+  protomotions: protomotions
+  whole_body_tracking: whole_body_tracking
+contracts:
+  wbt_fps: 50
+  g1_joint_count: 29
