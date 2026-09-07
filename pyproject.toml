@@ -1,0 +1,12 @@
+[project]
+name = "g1-motion-pipeline"
+version = "0.1.0"
+description = "Auditable video-to-G1 motion pipeline"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24"]
+
+[project.scripts]
+g1-pipeline = "g1pipe.cli:main"
+
+[tool.setuptools]
+packages = ["g1pipe"]
