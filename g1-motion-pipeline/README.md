@@ -43,6 +43,12 @@ GVHMR hmr4d_results.pt
 → PyRoki G1 PT → WBT NPZ
 ```
 
+## Real-robot deployment contribution
+
+In addition to the offline pipeline and web console, I authored a **160D real-robot policy deployment adapter** that connects WBT robot-reference motion to a Unitree G1 policy observation. The adapter selectively combines the safe ROS/DDS runtime structure of a 177D SMPL deployment with the 58D robot-reference observation semantics of a 154D deployment, while introducing its own NPZ input path, 160D observation contract, diagnostics, and fail-closed safety gates.
+
+The public repository documents this engineering contribution without publishing physical-robot control code or infrastructure details. See [Real-Robot 160D Deployment Adapter](docs/real-robot-deployment-adapter.md).
+
 ## What the web console shows
 
 Each run has one card per stage with a concrete status: **waiting**, **running**, **completed**, **failed**, or **warning**. Result pages provide stage-scoped evidence instead of one opaque output folder.
