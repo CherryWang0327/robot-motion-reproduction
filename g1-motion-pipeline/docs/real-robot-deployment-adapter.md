@@ -6,7 +6,7 @@ I authored the integration and safety adaptation that bridges an offline WBT rob
 
 | Reference | What I retained or learned from it | What I changed or added in the 160D adapter |
 |---|---|---|
-| 177D SMPL deployment | ROS/DDS runtime structure, odometry handling, state machine, startup alignment, diagnostics | Replaced the SMPL command path with a robot-reference NPZ path; preserved the runtime structure while adding fail-closed gates |
+| 177D SMPL deployment | ROS/DDS runtime structure, odometry handling, state machine, startup alignment, diagnostics | Replaced the SMPL command path with a robot-reference NPZ path; preserved the runtime structure while adding a dry-run branch and 160D-specific diagnostics |
 | 154D robot-reference deployment | 58D reference convention, observation ordering, and robot-reference NPZ field semantics | Adapted only the observation contract; did not copy its command publishing, gains, action scaling, joint mapping, or startup behavior |
 
 The resulting adapter is an independent development layer, not a copy of either teacher deployment.
@@ -32,12 +32,9 @@ This explicitly replaces the 75D custom SMPL command used by the 177D reference 
 - Reworked the main runtime loop to construct the 160D observation from reference motion, live robot state, odometry, IMU, and previous action.
 - Replaced the SMPL CSV / coordinate-conversion input path with a robot-reference NPZ path and torso-based reference orientation.
 - Preserved ROS odometry and safe runtime structure from the 177D reference while making the reference input and observation semantics explicit.
-- Added offline validation that imports neither ROS nor Unitree DDS and cannot publish commands.
-- Added dry-run behavior that does not construct a low-command publisher.
-- Added stale-odometry, publisher-source, and explicit control-certification gates so an unreviewed run fails closed rather than publishing commands.
-- Added diagnostics for odometry-versus-torso frame alignment, reference-vs-measured joint error, and observation dimension consistency.
-- Added unit and contract tests for the 160D observation, reference adapter, frame handling, safety gates, and training interface.
+- Implemented an explicit dry-run branch: when `dry_run=True`, the command-send path returns without publishing.
+- Added reference-versus-measured joint diagnostics, ONNX output inspection, loop-latency diagnostics, and an observation-dimension consistency check.
 
 ## Verification boundary
 
-The adapter has offline numerical and simulator-facing validation. Real-robot execution remains a separately reviewed operation: the physical source, latency, sign, and frame semantics of odometry must be verified with a no-command dry run and on-site safety approval. The public repository deliberately omits real-robot control code, deployment credentials, network configuration, and company-specific runtime artifacts.
+The adapter has an explicit no-command dry-run path, but the checked source currently sets `dry_run=False` at module scope. It must therefore be treated as a research reference—not a safe-to-run public deployment. Real-robot execution remains a separately reviewed operation: the physical source, latency, sign, and frame semantics of odometry must be verified with a no-command dry run and on-site safety approval. The public repository deliberately omits deployment credentials, network configuration, and company-specific runtime artifacts.
