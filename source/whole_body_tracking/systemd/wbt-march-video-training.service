@@ -1,0 +1,14 @@
+[Unit]
+Description=Whole-body tracking march-video convergence queue
+After=multi-user.target
+
+[Service]
+Type=simple
+User=unitree
+WorkingDirectory=/home/unitree/projects/whole_body_tracking
+ExecStart=/home/unitree/miniconda3/envs/whole_body_tracking/bin/python /home/unitree/projects/whole_body_tracking/scripts/run_march_video_until_converged.py
+Restart=on-failure
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target

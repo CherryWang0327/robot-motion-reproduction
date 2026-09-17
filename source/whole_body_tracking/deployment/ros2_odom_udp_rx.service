@@ -1,0 +1,14 @@
+[Unit]
+Description=Unitree obs_run ROS2 odometry UDP receiver
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -lc 'source /home/unitree/ros2_humble/install/local_setup.bash && unset ROS_DOMAIN_ID && cd /home/unitree/BysanRL/BeyondMimic_nogmr/Beyondmimic_Deploy_G1-main/deploy_multi_policy && exec python3 tools/ros1_odom_to_ros2_udp_bridge_with_twist.py --mode ros2_rx --ros2_topic /Odometry_2 --udp_host 0.0.0.0 --udp_port 15555 --print_pose --pose_print_every 50 --pose_print_rpy'
+Restart=always
+RestartSec=2
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=default.target

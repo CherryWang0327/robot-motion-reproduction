@@ -1,0 +1,18 @@
+[Unit]
+Description=Persistent sequential March motion training for Whole Body Tracking
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=unitree
+WorkingDirectory=/home/unitree/projects/whole_body_tracking
+ExecStart=/bin/bash /home/unitree/projects/whole_body_tracking/scripts/run_weekend_march_training.sh
+Restart=on-failure
+RestartSec=10
+RestartPreventExitStatus=2
+KillSignal=SIGINT
+TimeoutStopSec=120
+
+[Install]
+WantedBy=multi-user.target

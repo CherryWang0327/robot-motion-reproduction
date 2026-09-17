@@ -1,0 +1,16 @@
+[Unit]
+Description=Restart ROS2 odometry UDP receiver if UDP packets are stuck
+After=ros2_odom_udp.service
+
+[Service]
+Type=simple
+# A healthy receiver drains UDP 15555 continuously.  A large Recv-Q means the
+# receiver process is alive but its ROS2 timer has stopped consuming packets.
+# No obs_run traffic leaves Recv-Q at zero, so this does not affect manual
+# start-after-deploy workflows.
+ExecStart=/bin/bash -lc 'while true; do sleep 5; recv_q=$$(ss -u -a -n | grep -m1 "0.0.0.0:15555" | tr -s " " | cut -d " " -f 2); recv_q=$${recv_q:-0}; if [ "$$recv_q" -ge 65536 ]; then logger -t ros2_odom_udp_watchdog "UDP 15555 Recv-Q=$$recv_q; restarting stuck ROS2 odometry receiver"; systemctl --user restart ros2_odom_udp.service; sleep 5; fi; done'
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target

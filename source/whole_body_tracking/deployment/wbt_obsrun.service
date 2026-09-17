@@ -1,0 +1,14 @@
+[Unit]
+Description=Whole-body-tracking FAST-LIO odometry upstream
+After=default.target
+
+[Service]
+Type=simple
+ExecStart=/home/unitree/wbt_obsrun_headless.sh
+Restart=always
+RestartSec=5
+StandardOutput=append:/home/unitree/wbt_obsrun.log
+StandardError=append:/home/unitree/wbt_obsrun.log
+
+[Install]
+WantedBy=default.target
