@@ -6,6 +6,24 @@ teacher reference script:
 - `deploy_real_smpl_177.py` supplies the ROS odometry and safe runtime structure.
 - `deploy_real4bydmimic.py` supplies the older robot-reference joint/control pattern.
 
+## Deployment policy selection
+
+The validated Taichi / `proto_zalign_taichi1` deployment policy is **separate
+from the March motion pipeline**.  For the 160D deployment adapter, use this
+Taichi export on the Unitree machine:
+
+```text
+/home/unitree/projects/whole_body_tracking/logs/rsl_rl/g1_flat/2026-08-18_18-11-23_baseline_proto_zalign_taichi1_100k/exported/policy.onnx
+```
+
+It is paired with the corresponding Taichi robot-reference motion input, not
+with `march_video_gmr_50fps.npz` or any March-trained checkpoint.  March
+training/replay is an independent GMR tracking workflow and must select its
+own run directory, checkpoint, motion file, and any exported policy.
+
+The ONNX file is deliberately not stored in this source repository; retrieve
+it from the above Unitree path (or export it again from that training run).
+
 ## Observation contract
 
 | Slice | Size | Meaning |
