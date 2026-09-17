@@ -43,6 +43,13 @@ class G1FlatDeepPPORunnerCfg(G1FlatPPORunnerCfg):
         self.policy.critic_hidden_dims = [512, 1024, 256, 128]
 
 
+@configclass
+class G1FlatRobustPPORunnerCfg(G1FlatPPORunnerCfg):
+    """Dedicated runner identity for robustness training without changing capacity."""
+
+    experiment_name = "g1_flat_robust"
+
+
 LOW_FREQ_SCALE = 0.5
 
 

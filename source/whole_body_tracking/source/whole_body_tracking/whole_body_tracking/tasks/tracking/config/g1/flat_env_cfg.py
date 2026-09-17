@@ -51,6 +51,29 @@ class G1FlatLowFreqEnvCfg(G1FlatEnvCfg):
 
 
 @configclass
+class G1FlatRobustEnvCfg(G1FlatEnvCfg):
+    """Independent robustness-training task for the Taichi sim2sim failure envelope.
+
+    The default task stays unchanged.  This variant exposes policies to the
+    low-friction edge observed in MuJoCo and to larger recovery velocities.
+    """
+
+    def __post_init__(self):
+        super().__post_init__()
+        self.events.physics_material.params["static_friction_range"] = (0.2, 1.6)
+        self.events.physics_material.params["dynamic_friction_range"] = (0.2, 1.2)
+        self.events.push_robot.interval_range_s = (0.8, 2.5)
+        self.events.push_robot.params["velocity_range"] = {
+            "x": (-0.8, 0.8),
+            "y": (-0.8, 0.8),
+            "z": (-0.25, 0.25),
+            "roll": (-0.70, 0.70),
+            "pitch": (-0.70, 0.70),
+            "yaw": (-1.0, 1.0),
+        }
+
+
+@configclass
 class G1FlatRefFaultEvalEnvCfg(G1FlatEnvCfg):
     """Isolated evaluation-only variant; clean command semantics are unchanged."""
 
