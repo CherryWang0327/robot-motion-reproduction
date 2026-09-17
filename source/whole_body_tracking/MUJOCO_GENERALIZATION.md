@@ -47,20 +47,24 @@ combined lateral-push cases. It does not certify real-robot safety.
 
 `Tracking-Flat-G1-Robust-v0` is an independent task; it leaves
 `Tracking-Flat-G1-v0` unchanged. It expands the material randomization lower
-bound to 0.20 and increases the existing random-velocity recovery events.
+bound to 0.20, randomizes all rigid-body masses over `0.85–1.25x` with
+consistent inertias, and increases the existing random-velocity recovery
+events.
 Use it only after GPU availability is restored:
 
 ```bash
-/home/unitree/miniconda3/envs/whole_body_tracking/bin/python \
-  scripts/rsl_rl/train.py \
+/home/unitree/miniconda3/envs/whole_body_tracking/bin/python -u \
+  scripts/run_until_converged.py \
   --task Tracking-Flat-G1-Robust-v0 \
-  --motion_file retarget_comparison/height_aligned/taichi1/taichi1_pyroki_height_aligned_50fps.npz \
-  --num_envs 4096 \
-  --max_iterations 30000 \
+  --motion-file retarget_comparison/height_aligned/taichi1/taichi1_pyroki_height_aligned_50fps.npz \
+  --run-dir logs/rsl_rl/g1_flat/taichi1_proto_zalign_robust_until_converged \
+  --run-name taichi1_proto_zalign_robust \
+  --num-envs 4096 \
   --seed 0 \
-  --headless \
-  --logger tensorboard \
-  --run_name taichi1_proto_zalign_robust
+  --min-iterations 30000 \
+  --segment-iterations 10000 \
+  --window 1000 \
+  --poll-seconds 60
 ```
 
 Keep the actor/critic capacity unchanged for this first targeted ablation. Only

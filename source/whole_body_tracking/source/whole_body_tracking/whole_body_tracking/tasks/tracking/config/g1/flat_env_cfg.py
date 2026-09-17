@@ -1,4 +1,6 @@
 from isaaclab.utils import configclass
+from isaaclab.managers import EventTermCfg as EventTerm
+from isaaclab.managers import SceneEntityCfg
 
 from whole_body_tracking.robots.g1 import G1_ACTION_SCALE, G1_CYLINDER_CFG
 import whole_body_tracking.tasks.tracking.mdp as mdp
@@ -62,6 +64,16 @@ class G1FlatRobustEnvCfg(G1FlatEnvCfg):
         super().__post_init__()
         self.events.physics_material.params["static_friction_range"] = (0.2, 1.6)
         self.events.physics_material.params["dynamic_friction_range"] = (0.2, 1.2)
+        self.events.body_mass = EventTerm(
+            func=mdp.randomize_rigid_body_mass,
+            mode="startup",
+            params={
+                "asset_cfg": SceneEntityCfg("robot", body_names=".*"),
+                "mass_distribution_params": (0.85, 1.25),
+                "operation": "scale",
+                "recompute_inertia": True,
+            },
+        )
         self.events.push_robot.interval_range_s = (0.8, 2.5)
         self.events.push_robot.params["velocity_range"] = {
             "x": (-0.8, 0.8),
