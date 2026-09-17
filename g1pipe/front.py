@@ -66,8 +66,8 @@ def build_from_video(video: Path, route: str, run_dir: Path, dry_run: bool = Fal
     _run(gvhmr_dir, [str(GVHMR_PYTHON), "tools/demo/demo.py", "--video", str(video), "--output_root", str(gvhmr_dir)], GVHMR_ROOT, dry_run, {"TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD": "1"})
     hmr = gvhmr_dir / "hmr4d_results.pt" if dry_run else _single(gvhmr_dir, "hmr4d_results.pt", "GVHMR result")
     smpl_dir = run_dir / "02_smpl"
-    smpl_csv = smpl_dir / f"{video.stem}_smpl_global_30fps.csv"
-    _run(smpl_dir, [str(GVHMR_PYTHON), "scripts/gvhmr_to_smpl_csv.py", "--input", str(hmr), "--output", str(smpl_csv), "--fps", "30"], GVHMR_ROOT, dry_run)
+    smpl_csv = smpl_dir / f"{video.stem}_smpl_global_50fps.csv"
+    _run(smpl_dir, [str(GVHMR_PYTHON), "scripts/gvhmr_to_smpl_csv.py", "--input", str(hmr), "--output", str(smpl_csv), "--fps", "50"], GVHMR_ROOT, dry_run)
     if route == "gmr":
         output = run_dir / "03_retarget" / f"{video.stem}_g1.pkl"
         # The Unitree desktop runs Xorg on :1, while web-worker processes do
@@ -85,7 +85,7 @@ def build_from_video(video: Path, route: str, run_dir: Path, dry_run: bool = Fal
             if desktop_auth.is_file():
                 gmr_env["XAUTHORITY"] = str(desktop_auth)
         can_record_gmr = bool(gmr_display)
-        gmr_command = [str(GMR_PYTHON), "scripts/smpl_csv_to_robot.py", "--input", str(smpl_csv), "--robot", "unitree_g1", "--output", str(output), "--fps", "30", "--target_fps", "30"]
+        gmr_command = [str(GMR_PYTHON), "scripts/smpl_csv_to_robot.py", "--input", str(smpl_csv), "--robot", "unitree_g1", "--output", str(output), "--fps", "50", "--target_fps", "50"]
         if can_record_gmr:
             gmr_command.append("--record_video")
         else:
