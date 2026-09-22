@@ -1,0 +1,38 @@
+{
+  "schema_version": "gvhmr_pt_to_smpl_csv_v2_project_zup",
+  "input_root": "/data/BysanRL/data_goal/pt/GVHMR/demo",
+  "output_root": "/data/BysanRL/data_goal/csv/GVHMR/demo",
+  "gmr_raw_output_root": "/data/BysanRL/data_goal/csv/GVHMR/demo_gmr_raw",
+  "motion_count": 10,
+  "excluded_motion_count": 11,
+  "exclude_manifest": "/data/BysanRL/data_goal/csv/GVHMR/demo/gvhmr_demo_excluded_motions.csv",
+  "exclude_manifest_sha256": "07b9c713905ec1c7447af797a25654583a508251ab126839160fda72f78624d8",
+  "coordinate_contract": {
+    "gvhmr_source": "gravity-aligned AY (Y-up)",
+    "csv_storage": "project Z-up world root/transl with original SMPL local body basis",
+    "deployment": "pose_conversion_mode=zup_full, root_rot_mode=asset_basis",
+    "gmr_raw_storage": "raw GVHMR AY (Y-up), not for project playback",
+    "gmr": "internal raw CSV + get_gvhmr_data_offline_fast(..., z_trans=False) performs the GMR-specific Y-up to robot conversion",
+    "project_world_matrix": [
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ]
+    ]
+  },
+  "manifest": "/data/BysanRL/data_goal/csv/GVHMR/demo/gvhmr_demo_smpl_csv_manifest.csv",
+  "manifest_sha256": "03cd6569fde52b281bd1821f217b3dfe001b13f4ad2343d1b9f3d428813aaf84",
+  "gmr_manifest": "/data/BysanRL/data_goal/csv/GVHMR/demo/gvhmr_demo_gmr_manifest.csv",
+  "gmr_manifest_sha256": "d386f007b28c1489492354c4f6ae270ace58584235d12811bcc3a9309e7b03a8"
+}
