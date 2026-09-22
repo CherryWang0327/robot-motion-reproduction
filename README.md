@@ -14,7 +14,7 @@
 
 ### Taichi1 · GMR route
 
-| GVHMR SMPL-X mesh replay (3–13 s) | GMR G1 replay (Taichi1, 3–13 s) | Original trained-policy evaluation (3–13 s) |
+| GVHMR SMPL-X mesh replay  | GMR G1 replay | Original trained-policy evaluation |
 |---|---|---|
 | ![Taichi1 GVHMR-derived SMPL world-motion preview](g1-motion-pipeline/assets/demo/taichi1_gvhmr_smpl_world_preview.gif) | [![Taichi1 GMR G1 replay](g1-motion-pipeline/assets/demo/taichi1_gmr_native_replay.gif)](g1-motion-pipeline/assets/demo/taichi1_gmr_native_replay.mp4) | ![Post-training Taichi1 WBT evaluation](g1-motion-pipeline/assets/demo/taichi1_trained_wbt_evaluation.gif) |
 
