@@ -63,7 +63,9 @@ Route B 明确保留 **Y-up** 坐标转换：`GVHMR PT → Y-up AMASS NPZ → Mo
 
 ### 工程贡献简述
 
-除离线动作管线外，我实现了一个将 WBT 机器人参考动作接入 **160 维真实机器人策略观测** 的适配层。它复用 177D SMPL 部署实现中的 ROS/DDS 运行时结构、里程计处理和诊断框架，同时采用 154D 机器人参考方案中的 58D 参考动作语义；二者的命令发布、增益、动作缩放、关节映射和启动行为保持分离。
+除离线动作管线外，我实现了从 GVHMR/SMPL、GMR、ProtoMotions 到 WBT 的脚本衔接、表示转换、验证、回放、训练评估和部署适配。`g1-motion-pipeline/g1pipe/` 是这条链路的编排层，`source/` 中的模块级脚本、配置和实验记录同样属于该实现贡献；`programs/` 仅保留可独立运行的部署与回放工具，并不代表贡献的全部范围。详见[实现贡献总览](CONTRIBUTIONS.md)。
+
+其中，160D 真实机器人策略观测适配层复用 177D SMPL 部署实现中的 ROS/DDS 运行时结构、里程计处理和诊断框架，同时采用 154D 机器人参考方案中的 58D 参考动作语义；二者的命令发布、增益、动作缩放、关节映射和启动行为保持分离。
 
 160D 观测由以下部分组成：58D 参考关节位置/速度、相对躯干位置与朝向、基座线速度/角速度、29D 实测关节位置、29D 实测关节速度以及 29D 上一策略动作。适配层还包含 NPZ 加载、维度一致性检查、参考与实测关节诊断、ONNX 输出检查、循环延迟诊断和显式 dry-run 路径。
 
@@ -72,11 +74,11 @@ Route B 明确保留 **Y-up** 坐标转换：`GVHMR PT → Y-up AMASS NPZ → Mo
 ### 仓库结构与复现材料
 
 - `g1-motion-pipeline/`：可审计编排流程、Web 控制台和完整项目文档。
-- `programs/deploy_real/`：部署参考程序以及文档中对应的策略/动作输入。
-- `programs/playback_scripts/`：本地回放、可视化和坐标验证工具。
+- `programs/`：可独立调用的部署、回放、可视化和坐标验证工具；并非贡献范围的总称。
 - `reproduction_assets/input/`：GVHMR SMPL CSV 输入和关联视频 CSV。
 - `reproduction_assets/output/`：生成的 G1 NPZ 输出和 smoke-test 输出。
-- `source/`：选定的本地代码改动、实验说明和复现记录。
+- `source/`：按 GVHMR、GMR、ProtoMotions 和 WBT 分类的模块实现、实验说明和复现记录。
+- [`CONTRIBUTIONS.md`](CONTRIBUTIONS.md)：编排、转换、验证、训练、评估与部署适配的完整贡献地图。
 - [`docs/original-workflow/`](docs/original-workflow/INDEX.md)：从本机文档目录原样归档的六份流程文档。
 
 ---
@@ -122,7 +124,9 @@ Route B intentionally preserves the **Y-up** coordinate contract: `GVHMR PT → 
 
 ### Engineering contribution
 
-In addition to the offline motion pipeline, I implemented an adapter that connects WBT robot-reference motion to a **160-dimensional real-robot policy observation**. It retains the ROS/DDS runtime structure, odometry handling, and diagnostic pattern from a 177D SMPL deployment reference, while using the 58D robot-reference semantics of a 154D reference. Command publication, gains, action scaling, joint mapping, and startup behavior remain deliberately separate.
+In addition to the offline motion pipeline, I implemented the script integration, representation conversion, validation, playback, training/evaluation, and deployment adaptation that connect GVHMR/SMPL, GMR, ProtoMotions, and WBT. `g1-motion-pipeline/g1pipe/` is the orchestration layer, while the module-level scripts, configurations, and experiment records under `source/` are also part of this implementation contribution. `programs/` contains only standalone deployment and playback tools; it does not define the contribution boundary. See the [implementation contribution map](CONTRIBUTIONS.md).
+
+The 160D real-robot policy-observation adapter retains the ROS/DDS runtime structure, odometry handling, and diagnostic pattern from a 177D SMPL deployment reference, while using the 58D robot-reference semantics of a 154D reference. Command publication, gains, action scaling, joint mapping, and startup behavior remain deliberately separate.
 
 The 160D observation contains 58D reference joint position/velocity, relative torso position and orientation, base linear/angular velocity, 29D measured joint position, 29D measured joint velocity, and 29D previous policy action. The adapter adds NPZ loading, dimensional checks, reference-versus-measured joint diagnostics, ONNX-output inspection, loop-latency diagnostics, and an explicit dry-run path.
 
@@ -131,11 +135,11 @@ This adapter is a research reference, not a ready-to-run public deployment. The 
 ### Repository layout and reproduction materials
 
 - `g1-motion-pipeline/` — auditable orchestration, web console, and project documentation.
-- `programs/deploy_real/` — deployment reference code and documented policy/motion inputs.
-- `programs/playback_scripts/` — local playback, visualization, and coordinate-validation helpers.
+- `programs/` — standalone deployment, playback, visualization, and coordinate-validation tools; not the full contribution boundary.
 - `reproduction_assets/input/` — GVHMR SMPL CSV inputs and the associated video CSV.
 - `reproduction_assets/output/` — generated G1 NPZ assets and a smoke-test output.
-- `source/` — selected local source changes, experiment notes, and reproduction records.
+- `source/` — module implementations, experiment notes, and reproduction records organized by GVHMR, GMR, ProtoMotions, and WBT.
+- [`CONTRIBUTIONS.md`](CONTRIBUTIONS.md) — complete map of orchestration, conversion, validation, training, evaluation, and deployment-adaptation contributions.
 - [`docs/original-workflow/`](docs/original-workflow/INDEX.md) — six workflow documents archived unchanged from the local document directory.
 
 ## Documentation
@@ -144,4 +148,5 @@ This adapter is a research reference, not a ready-to-run public deployment. The 
 - [Manual reproduction guide](g1-motion-pipeline/docs/manual-reproduction.md)
 - [160D deployment adapter](g1-motion-pipeline/docs/real-robot-deployment-adapter.md)
 - [Original workflow-document archive](docs/original-workflow/INDEX.md)
+- [Implementation contribution map](CONTRIBUTIONS.md)
 - [Archive scope](ARCHIVE_SCOPE.md)
