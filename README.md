@@ -77,6 +77,7 @@ Route B 明确保留 **Y-up** 坐标转换：`GVHMR PT → Y-up AMASS NPZ → Mo
 - `reproduction_assets/input/`：GVHMR SMPL CSV 输入和关联视频 CSV。
 - `reproduction_assets/output/`：生成的 G1 NPZ 输出和 smoke-test 输出。
 - `source/`：选定的本地代码改动、实验说明和复现记录。
+- [`docs/original-workflow/`](docs/original-workflow/INDEX.md)：从本机文档目录原样归档的六份流程文档。
 
 ---
 
@@ -135,10 +136,12 @@ This adapter is a research reference, not a ready-to-run public deployment. The 
 - `reproduction_assets/input/` — GVHMR SMPL CSV inputs and the associated video CSV.
 - `reproduction_assets/output/` — generated G1 NPZ assets and a smoke-test output.
 - `source/` — selected local source changes, experiment notes, and reproduction records.
+- [`docs/original-workflow/`](docs/original-workflow/INDEX.md) — six workflow documents archived unchanged from the local document directory.
 
 ## Documentation
 
 - [G1 Motion Pipeline](g1-motion-pipeline/)
 - [Manual reproduction guide](g1-motion-pipeline/docs/manual-reproduction.md)
 - [160D deployment adapter](g1-motion-pipeline/docs/real-robot-deployment-adapter.md)
+- [Original workflow-document archive](docs/original-workflow/INDEX.md)
 - [Archive scope](ARCHIVE_SCOPE.md)
