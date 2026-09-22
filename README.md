@@ -14,9 +14,9 @@
 
 ### Taichi1 · GMR route
 
-| GVHMR-derived SMPL world-motion preview | GMR-retargeted G1 reference preview | Post-training WBT evaluation |
+| GVHMR-derived SMPL world-motion preview | GMR G1 replay (Taichi1) | Post-training WBT evaluation |
 |---|---|---|
-| ![Taichi1 GVHMR-derived SMPL world-motion preview](g1-motion-pipeline/assets/demo/taichi1_gvhmr_smpl_world_preview.gif) | ![Taichi1 GMR-retargeted G1 reference preview](g1-motion-pipeline/assets/demo/taichi1_gmr_retarget_preview.gif) | ![Post-training Taichi1 WBT evaluation](g1-motion-pipeline/assets/demo/taichi1_trained_wbt_evaluation.gif) |
+| ![Taichi1 GVHMR-derived SMPL world-motion preview](g1-motion-pipeline/assets/demo/taichi1_gvhmr_smpl_world_preview.gif) | [![Taichi1 GMR G1 replay](g1-motion-pipeline/assets/demo/taichi1_gmr_native_replay.gif)](g1-motion-pipeline/assets/demo/taichi1_gmr_native_replay.mp4) | ![Post-training Taichi1 WBT evaluation](g1-motion-pipeline/assets/demo/taichi1_trained_wbt_evaluation.gif) |
 
 ---
 
@@ -24,7 +24,7 @@
 
 ### 整体介绍
 
-这是一个面向 Unitree G1 全身跟踪（WBT）的可审计动作复现工作流。项目从单目人体动作视频开始，通过 GVHMR 重建世界坐标系中的人体运动；随后选择 GMR 或 ProtoMotions / PyRoki 路线完成 G1 重定向；最后生成并验证 WBT 所需的 NPZ 参考动作。首页按 March 与 Taichi1 分为两行，分别展示从人体动作、G1 重定向到训练后跟踪的完整证据链。Taichi1 第一格由其保存的 GVHMR SMPL CSV 离线合成，原始 GVHMR 相机/世界重建视频未保留。
+这是一个面向 Unitree G1 全身跟踪（WBT）的可审计动作复现工作流。项目从单目人体动作视频开始，通过 GVHMR 重建世界坐标系中的人体运动；随后选择 GMR 或 ProtoMotions / PyRoki 路线完成 G1 重定向；最后生成并验证 WBT 所需的 NPZ 参考动作。首页按 March 与 Taichi1 分为两行，分别展示从人体动作、G1 重定向到训练后跟踪的完整证据链。Taichi1 第一格由其保存的 GVHMR SMPL CSV 离线合成，原始 GVHMR 相机/世界重建视频未保留；第二格则按 March 的 GMR G1 replay 表达方式，用同一 GMR MuJoCo 模型回放已验证的 Taichi1 GMR→WBT 轨迹，并非 WBT 骨架示意图。
 
 与只输出一个动作文件的流程不同，本项目将命令、阶段产物、数值验证报告和可视化证据放在同一个可追溯运行目录中。每一个表示转换边界都可被单独检查：坐标系、采样率、关节布局、四元数以及时序连续性。
 
@@ -80,7 +80,7 @@ Route B 明确保留 **Y-up** 坐标转换：`GVHMR PT → Y-up AMASS NPZ → Mo
 
 ### Overview
 
-This is an auditable motion-reproduction workflow for Unitree G1 Whole-Body Tracking (WBT). Starting from monocular human-motion video, it uses GVHMR to reconstruct world-space human motion, retargets that motion to G1 through either GMR or ProtoMotions / PyRoki, and produces a validated WBT NPZ reference asset. The top section is arranged as parallel March and Taichi1 evidence chains: human motion, G1 retargeting, and post-training tracking. The first Taichi1 panel is an offline world-motion preview synthesized from its preserved GVHMR SMPL CSV; the original GVHMR camera/world reconstruction videos were not retained.
+This is an auditable motion-reproduction workflow for Unitree G1 Whole-Body Tracking (WBT). Starting from monocular human-motion video, it uses GVHMR to reconstruct world-space human motion, retargets that motion to G1 through either GMR or ProtoMotions / PyRoki, and produces a validated WBT NPZ reference asset. The top section is arranged as parallel March and Taichi1 evidence chains: human motion, G1 retargeting, and post-training tracking. The first Taichi1 panel is an offline world-motion preview synthesized from its preserved GVHMR SMPL CSV; the original GVHMR camera/world reconstruction videos were not retained. Its second panel uses the same GMR MuJoCo G1-replay presentation as March to replay the validated Taichi1 GMR-to-WBT trajectory; it is not a WBT skeleton illustration.
 
 Rather than emitting a single opaque motion file, the workflow keeps commands, stage artifacts, numerical validation reports, and visual evidence together in a traceable run directory. Each representation boundary can be inspected independently: coordinate convention, sampling rate, joint layout, quaternion validity, and temporal consistency.
 
