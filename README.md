@@ -1,86 +1,130 @@
 # Robot Motion Reproduction · G1 Motion Pipeline
 
-[中文](#中文) · [English](#english) · [Español](#español)
+[中文](#中文) · [English](#english)
 
-An auditable workflow that turns monocular human-motion video into validated Unitree G1 reference motion for Whole-Body Tracking (WBT). It packages reproducible source code, documented inputs and outputs, deployment references, and visual evidence in one repository.
+> An auditable video-to-Unitree-G1 motion workflow: reconstruct human motion, retarget it to G1, validate the Whole-Body Tracking (WBT) asset, and retain evidence for every representation boundary.
 
-> Safety boundary: this repository prepares and validates offline motion assets. It does not send commands to a physical robot; any training or deployment remains a separate, human-approved step.
+> 项目安全边界：本仓库用于离线动作资产的生成、回放与验证；不向实体机器人发送控制指令。训练或真实部署必须经过独立的人工审核与现场安全确认。
 
-| GVHMR world reconstruction | GMR G1 retargeting | WBT policy tracking |
+| GVHMR world-space reconstruction | Native GMR G1 replay | WBT policy tracking preview |
 |---|---|---|
-| [![GVHMR world reconstruction](g1-motion-pipeline/assets/demo/gvhmr_world.gif)](g1-motion-pipeline/assets/demo/gvhmr_world.mp4) | [![GMR G1 retargeting](g1-motion-pipeline/assets/demo/gmr_g1.gif)](g1-motion-pipeline/assets/demo/gmr_g1.mp4) | [![WBT policy tracking](g1-motion-pipeline/assets/demo/wbt_tracking.gif)](g1-motion-pipeline/assets/demo/wbt_tracking.mp4) |
+| [![GVHMR world reconstruction](g1-motion-pipeline/assets/demo/gvhmr_world.gif)](g1-motion-pipeline/assets/demo/gvhmr_world.mp4) | [![GMR G1 replay](g1-motion-pipeline/assets/demo/gmr_g1.gif)](g1-motion-pipeline/assets/demo/gmr_g1.mp4) | [![WBT policy tracking](g1-motion-pipeline/assets/demo/wbt_tracking.gif)](g1-motion-pipeline/assets/demo/wbt_tracking.mp4) |
+
+---
 
 ## 中文
 
-### 项目简介
+### 整体介绍
 
-本项目将单目人体动作视频转换为经过验证的 Unitree G1 全身跟踪参考动作。流程整合 GVHMR、GMR 或 ProtoMotions / PyRoki 与 WBT，并记录每一个阶段的命令、产物、验证结果和可视化证据。
+这是一个面向 Unitree G1 全身跟踪（WBT）的可审计动作复现工作流。项目从单目人体动作视频开始，通过 GVHMR 重建世界坐标系中的人体运动；随后选择 GMR 或 ProtoMotions / PyRoki 路线完成 G1 重定向；最后生成并验证 WBT 所需的 NPZ 参考动作。
 
-```text
-输入视频 → GVHMR 人体世界坐标运动 → GMR / ProtoMotions 重定向 → G1 参考动作 → WBT 验证
+与只输出一个动作文件的流程不同，本项目将命令、阶段产物、数值验证报告和可视化证据放在同一个可追溯运行目录中。每一个表示转换边界都可被单独检查：坐标系、采样率、关节布局、四元数以及时序连续性。
+
+### 总流程图
+
+```mermaid
+flowchart LR
+    A[单目输入视频] --> B[GVHMR<br/>人体运动重建]
+    B --> C[世界坐标运动与 SMPL 导出]
+    C --> D{重定向路线}
+    D -->|Route A| E[GMR<br/>G1 PKL]
+    D -->|Route B| F[AMASS Y-up → ProtoMotions<br/>→ PyRoki G1 PT]
+    E --> G[WBT G1 NPZ]
+    F --> G
+    G --> H[数值格式验证<br/>fps / shape / finite / quaternion / temporal]
+    H --> I[预训练策略离线跟踪预览]
+    I --> J{人工审核}
+    J -->|批准| K[训练计划]
+    J -->|不批准| L[保留证据并定位问题]
 ```
 
-### 仓库内容
+### 阶段、产物与验证
 
-- `g1-motion-pipeline/`：可审计、人工审核在环的编排流程与项目文档。
-- `programs/deploy_real/`：部署参考程序及其已记录的策略/动作输入。
-- `programs/playback_scripts/`：本地回放、可视化和坐标验证脚本。
-- `reproduction_assets/input/`：GVHMR SMPL CSV 输入与关联视频 CSV。
-- `reproduction_assets/output/`：生成的 G1 NPZ 输出与 smoke-test 输出。
-- `source/`：选定的本地源码修改、实验说明及复现记录。
+| 阶段 | 主要产物 | 检查重点 |
+|---|---|---|
+| GVHMR | 世界坐标人体运动、SMPL 导出、相机/世界视角视频 | 人体重建、坐标约定、输入输出对应关系 |
+| GMR 或 ProtoMotions / PyRoki | G1 参考运动（PKL 或 PT）与回放证据 | 根朝向、关节范围、接触与动作合理性 |
+| WBT 转换 | G1 NPZ | 帧率、关节与刚体维度、有限值、四元数、时间连续性 |
+| 离线预览 | 预训练策略跟踪回放与报告 | 动作可跟踪性；它补充而不替代数值验证 |
 
-### 可复现性与边界
+Route B 明确保留 **Y-up** 坐标转换：`GVHMR PT → Y-up AMASS NPZ → MotionLib → PyRoki G1 PT`。跳过或混用该坐标约定，可能得到“文件可生成但视觉无效”的机器人动作。
 
-G1 NPZ 在进入训练队列前会检查帧率、关节与刚体维度、数值有限性、四元数和时间连续性。训练默认只生成计划，必须经过人工明确批准才会执行。请在发布或再分发前核对上游项目、模型和数据资产的许可证。
+### 工程贡献简述
+
+除离线动作管线外，我实现了一个将 WBT 机器人参考动作接入 **160 维真实机器人策略观测** 的适配层。它复用 177D SMPL 部署实现中的 ROS/DDS 运行时结构、里程计处理和诊断框架，同时采用 154D 机器人参考方案中的 58D 参考动作语义；二者的命令发布、增益、动作缩放、关节映射和启动行为保持分离。
+
+160D 观测由以下部分组成：58D 参考关节位置/速度、相对躯干位置与朝向、基座线速度/角速度、29D 实测关节位置、29D 实测关节速度以及 29D 上一策略动作。适配层还包含 NPZ 加载、维度一致性检查、参考与实测关节诊断、ONNX 输出检查、循环延迟诊断和显式 dry-run 路径。
+
+该适配层是研究参考而非可直接运行的公开部署工具；仓库不包含凭据、网络配置或公司特定运行时资产。详见 [160D 部署适配说明](g1-motion-pipeline/docs/real-robot-deployment-adapter.md)。
+
+### 仓库结构与复现材料
+
+- `g1-motion-pipeline/`：可审计编排流程、Web 控制台和完整项目文档。
+- `programs/deploy_real/`：部署参考程序以及文档中对应的策略/动作输入。
+- `programs/playback_scripts/`：本地回放、可视化和坐标验证工具。
+- `reproduction_assets/input/`：GVHMR SMPL CSV 输入和关联视频 CSV。
+- `reproduction_assets/output/`：生成的 G1 NPZ 输出和 smoke-test 输出。
+- `source/`：选定的本地代码改动、实验说明和复现记录。
+
+---
 
 ## English
 
 ### Overview
 
-This project converts monocular human-motion video into validated Unitree G1 reference motion for Whole-Body Tracking. It integrates GVHMR, GMR or ProtoMotions / PyRoki, and WBT while preserving commands, artifacts, validation reports, and visual evidence for every stage.
+This is an auditable motion-reproduction workflow for Unitree G1 Whole-Body Tracking (WBT). Starting from monocular human-motion video, it uses GVHMR to reconstruct world-space human motion, retargets that motion to G1 through either GMR or ProtoMotions / PyRoki, and produces a validated WBT NPZ reference asset.
 
-```text
-Input video → GVHMR world-space motion → GMR / ProtoMotions retargeting → G1 reference motion → WBT validation
+Rather than emitting a single opaque motion file, the workflow keeps commands, stage artifacts, numerical validation reports, and visual evidence together in a traceable run directory. Each representation boundary can be inspected independently: coordinate convention, sampling rate, joint layout, quaternion validity, and temporal consistency.
+
+### End-to-end flow
+
+```mermaid
+flowchart LR
+    A[Monocular input video] --> B[GVHMR<br/>human-motion reconstruction]
+    B --> C[World-space motion and SMPL export]
+    C --> D{Retargeting route}
+    D -->|Route A| E[GMR<br/>G1 PKL]
+    D -->|Route B| F[AMASS Y-up → ProtoMotions<br/>→ PyRoki G1 PT]
+    E --> G[WBT G1 NPZ]
+    F --> G
+    G --> H[Numerical validation<br/>fps / shape / finite / quaternion / temporal]
+    H --> I[Pretrained-policy offline tracking preview]
+    I --> J{Human review}
+    J -->|Approved| K[Training plan]
+    J -->|Not approved| L[Retain evidence and diagnose]
 ```
 
-### Repository layout
+### Stages, artifacts, and validation
 
-- `g1-motion-pipeline/` — auditable orchestration with a human approval gate.
-- `programs/deploy_real/` — deployment reference program and documented policy/motion inputs.
+| Stage | Primary artifacts | What is checked |
+|---|---|---|
+| GVHMR | World-space human motion, SMPL export, camera/world videos | Reconstruction quality, coordinate convention, input-output correspondence |
+| GMR or ProtoMotions / PyRoki | G1 reference motion (PKL or PT) and replay evidence | Root orientation, joint limits, contact behavior, visual plausibility |
+| WBT conversion | G1 NPZ | Frame rate, joint and rigid-body dimensions, finite values, quaternions, temporal consistency |
+| Offline preview | Pretrained-policy tracking replay and report | Trackability; this complements rather than replaces numerical validation |
+
+Route B intentionally preserves the **Y-up** coordinate contract: `GVHMR PT → Y-up AMASS NPZ → MotionLib → PyRoki G1 PT`. Skipping or mixing this convention can create a file that exists but is visually invalid as robot motion.
+
+### Engineering contribution
+
+In addition to the offline motion pipeline, I implemented an adapter that connects WBT robot-reference motion to a **160-dimensional real-robot policy observation**. It retains the ROS/DDS runtime structure, odometry handling, and diagnostic pattern from a 177D SMPL deployment reference, while using the 58D robot-reference semantics of a 154D reference. Command publication, gains, action scaling, joint mapping, and startup behavior remain deliberately separate.
+
+The 160D observation contains 58D reference joint position/velocity, relative torso position and orientation, base linear/angular velocity, 29D measured joint position, 29D measured joint velocity, and 29D previous policy action. The adapter adds NPZ loading, dimensional checks, reference-versus-measured joint diagnostics, ONNX-output inspection, loop-latency diagnostics, and an explicit dry-run path.
+
+This adapter is a research reference, not a ready-to-run public deployment. The repository omits credentials, network configuration, and company-specific runtime assets. See the [160D deployment adapter note](g1-motion-pipeline/docs/real-robot-deployment-adapter.md).
+
+### Repository layout and reproduction materials
+
+- `g1-motion-pipeline/` — auditable orchestration, web console, and project documentation.
+- `programs/deploy_real/` — deployment reference code and documented policy/motion inputs.
 - `programs/playback_scripts/` — local playback, visualization, and coordinate-validation helpers.
 - `reproduction_assets/input/` — GVHMR SMPL CSV inputs and the associated video CSV.
 - `reproduction_assets/output/` — generated G1 NPZ assets and a smoke-test output.
 - `source/` — selected local source changes, experiment notes, and reproduction records.
 
-### Validation and scope
-
-Before motion can be queued for training, the workflow checks frame rate, joint and rigid-body dimensions, finite values, quaternion validity, and temporal consistency. Training is planned by default and requires explicit human approval. Review upstream licenses before publishing or redistributing any model or asset.
-
-## Español
-
-### Descripción general
-
-Este proyecto convierte vídeo monocular de movimiento humano en movimiento de referencia validado para Unitree G1 y Whole-Body Tracking (WBT). Integra GVHMR, GMR o ProtoMotions / PyRoki y WBT, conservando comandos, artefactos, informes de validación y evidencia visual de cada etapa.
-
-```text
-Vídeo de entrada → movimiento mundial con GVHMR → retargeting GMR / ProtoMotions → movimiento de referencia G1 → validación WBT
-```
-
-### Estructura del repositorio
-
-- `g1-motion-pipeline/`: orquestación auditable con aprobación humana.
-- `programs/deploy_real/`: programa de referencia para despliegue e inputs documentados de política/movimiento.
-- `programs/playback_scripts/`: herramientas locales de reproducción, visualización y validación de coordenadas.
-- `reproduction_assets/input/`: entradas SMPL CSV de GVHMR y el CSV de vídeo asociado.
-- `reproduction_assets/output/`: activos G1 NPZ generados y una salida de prueba rápida.
-- `source/`: cambios locales seleccionados, notas experimentales y registros de reproducción.
-
-### Validación y seguridad
-
-Antes de planificar el entrenamiento, el flujo verifica la frecuencia de cuadros, dimensiones de articulaciones y cuerpos rígidos, valores finitos, cuaterniones y consistencia temporal. El entrenamiento requiere aprobación humana explícita. Revisa las licencias de proyectos, modelos y activos antes de publicarlos o redistribuirlos.
-
-## Further documentation
+## Documentation
 
 - [G1 Motion Pipeline](g1-motion-pipeline/)
 - [Manual reproduction guide](g1-motion-pipeline/docs/manual-reproduction.md)
+- [160D deployment adapter](g1-motion-pipeline/docs/real-robot-deployment-adapter.md)
 - [Archive scope](ARCHIVE_SCOPE.md)
