@@ -6,9 +6,9 @@
 
 > 项目安全边界：本仓库用于离线动作资产的生成、回放与验证；不向实体机器人发送控制指令。训练或真实部署必须经过独立的人工审核与现场安全确认。
 
-| GVHMR world-space reconstruction | Native GMR G1 replay | WBT policy tracking preview |
+| GVHMR world-space reconstruction | Native GMR G1 replay | Post-training March-GMR WBT evaluation |
 |---|---|---|
-| [![GVHMR world reconstruction](g1-motion-pipeline/assets/demo/gvhmr_world.gif)](g1-motion-pipeline/assets/demo/gvhmr_world.mp4) | [![GMR G1 replay](g1-motion-pipeline/assets/demo/gmr_g1.gif)](g1-motion-pipeline/assets/demo/gmr_g1.mp4) | [![WBT policy tracking](g1-motion-pipeline/assets/demo/wbt_tracking.gif)](g1-motion-pipeline/assets/demo/wbt_tracking.mp4) |
+| [![GVHMR world reconstruction](g1-motion-pipeline/assets/demo/gvhmr_world.gif)](g1-motion-pipeline/assets/demo/gvhmr_world.mp4) | [![GMR G1 replay](g1-motion-pipeline/assets/demo/gmr_g1.gif)](g1-motion-pipeline/assets/demo/gmr_g1.mp4) | ![Post-training March-GMR WBT evaluation](g1-motion-pipeline/assets/demo/march_gmr_trained_wbt.gif) |
 
 ---
 
@@ -45,7 +45,7 @@ flowchart LR
 | GVHMR | 世界坐标人体运动、SMPL 导出、相机/世界视角视频 | 人体重建、坐标约定、输入输出对应关系 |
 | GMR 或 ProtoMotions / PyRoki | G1 参考运动（PKL 或 PT）与回放证据 | 根朝向、关节范围、接触与动作合理性 |
 | WBT 转换 | G1 NPZ | 帧率、关节与刚体维度、有限值、四元数、时间连续性 |
-| 离线预览 | 预训练策略跟踪回放与报告 | 动作可跟踪性；它补充而不替代数值验证 |
+| 训练后评估 | March 视频经 GMR 路线训练后的 WBT 评估录制与报告 | 展示训练后策略对该 GMR 参考动作的跟踪；它补充而不替代数值验证 |
 
 Route B 明确保留 **Y-up** 坐标转换：`GVHMR PT → Y-up AMASS NPZ → MotionLib → PyRoki G1 PT`。跳过或混用该坐标约定，可能得到“文件可生成但视觉无效”的机器人动作。
 
@@ -101,7 +101,7 @@ flowchart LR
 | GVHMR | World-space human motion, SMPL export, camera/world videos | Reconstruction quality, coordinate convention, input-output correspondence |
 | GMR or ProtoMotions / PyRoki | G1 reference motion (PKL or PT) and replay evidence | Root orientation, joint limits, contact behavior, visual plausibility |
 | WBT conversion | G1 NPZ | Frame rate, joint and rigid-body dimensions, finite values, quaternions, temporal consistency |
-| Offline preview | Pretrained-policy tracking replay and report | Trackability; this complements rather than replaces numerical validation |
+| Post-training evaluation | WBT evaluation recording and report after training on the March-video GMR route | Shows trained-policy tracking of the GMR reference motion; this complements rather than replaces numerical validation |
 
 Route B intentionally preserves the **Y-up** coordinate contract: `GVHMR PT → Y-up AMASS NPZ → MotionLib → PyRoki G1 PT`. Skipping or mixing this convention can create a file that exists but is visually invalid as robot motion.
 
