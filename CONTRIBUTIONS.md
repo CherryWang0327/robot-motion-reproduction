@@ -7,6 +7,7 @@ The contribution is not limited to the two standalone entry points under `progra
 | 贡献模块 / Contribution area | 主要位置 / Primary location | 内容 / Scope |
 |---|---|---|
 | 工作流编排与接口契约 / Workflow orchestration and contracts | `g1-motion-pipeline/g1pipe/` | 视频输入、阶段编排、路线选择、产物契约、任务状态与 CLI。 |
+| Web 控制台与结果展示 / Web console and results experience | `g1-motion-pipeline/web/`, `g1-motion-pipeline/server/` | 完整的前后端界面、任务创建与状态管理、结果页、资产展示和本地服务集成。 |
 | GVHMR→GMR 转换 / GVHMR-to-GMR conversion | `g1-motion-pipeline/g1pipe/front.py`, `convert.py`, `source/GVHMR/scripts/`, `source/GMR/scripts/` | SMPL CSV 规范、坐标约定、GMR 输入输出转换。 |
 | GMR 与 ProtoMotions 路线衔接 / GMR and ProtoMotions route integration | `g1-motion-pipeline/g1pipe/gmr.py`, `proto_preview.py`, `source/GMR/`, `source/ProtoMotions/` | G1 重定向、路线产物衔接与回放。 |
 | 参考动作验证与可视化 / Reference validation and visualization | `g1-motion-pipeline/g1pipe/validate.py`, `render_reference.py`, `programs/playback_scripts/` | NPZ/CSV/SMPL 回放、坐标检查、格式与时序验证。 |
@@ -15,7 +16,7 @@ The contribution is not limited to the two standalone entry points under `progra
 
 ## 目录说明 / Directory roles
 
-- `g1-motion-pipeline/`：主实现层；包含编排、转换、验证、训练、Web 控制台与展示证据。
+- `g1-motion-pipeline/`：主实现层；包含编排、转换、验证、训练，以及由作者完整实现的 Web 控制台、服务端和结果展示。
 - `source/`：按 GVHMR、GMR、ProtoMotions 和 WBT 模块保存的实现、脚本、配置和实验记录；它们是贡献的一部分，不是未参与的上游镜像。
 - `programs/`：仅放可单独调用的部署、回放和验证工具；它不定义贡献边界。
 - `reproduction_assets/`：可审计的输入、输出、原始视频和清单。

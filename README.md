@@ -63,7 +63,7 @@ Route B 明确保留 **Y-up** 坐标转换：`GVHMR PT → Y-up AMASS NPZ → Mo
 
 ### 工程贡献简述
 
-除离线动作管线外，我实现了从 GVHMR/SMPL、GMR、ProtoMotions 到 WBT 的脚本衔接、表示转换、验证、回放、训练评估和部署适配。`g1-motion-pipeline/g1pipe/` 是这条链路的编排层，`source/` 中的模块级脚本、配置和实验记录同样属于该实现贡献；`programs/` 仅保留可独立运行的部署与回放工具，并不代表贡献的全部范围。详见[实现贡献总览](CONTRIBUTIONS.md)。
+除离线动作管线外，我完整实现了 Web 控制台及其服务端、任务创建与状态管理、结果页和资产展示；也实现了从 GVHMR/SMPL、GMR、ProtoMotions 到 WBT 的脚本衔接、表示转换、验证、回放、训练评估和部署适配。`g1-motion-pipeline/g1pipe/` 是这条链路的编排层，`source/` 中的模块级脚本、配置和实验记录同样属于该实现贡献；`programs/` 仅保留可独立运行的部署与回放工具，并不代表贡献的全部范围。详见[实现贡献总览](CONTRIBUTIONS.md)。
 
 其中，160D 真实机器人策略观测适配层复用 177D SMPL 部署实现中的 ROS/DDS 运行时结构、里程计处理和诊断框架，同时采用 154D 机器人参考方案中的 58D 参考动作语义；二者的命令发布、增益、动作缩放、关节映射和启动行为保持分离。
 
@@ -124,7 +124,7 @@ Route B intentionally preserves the **Y-up** coordinate contract: `GVHMR PT → 
 
 ### Engineering contribution
 
-In addition to the offline motion pipeline, I implemented the script integration, representation conversion, validation, playback, training/evaluation, and deployment adaptation that connect GVHMR/SMPL, GMR, ProtoMotions, and WBT. `g1-motion-pipeline/g1pipe/` is the orchestration layer, while the module-level scripts, configurations, and experiment records under `source/` are also part of this implementation contribution. `programs/` contains only standalone deployment and playback tools; it does not define the contribution boundary. See the [implementation contribution map](CONTRIBUTIONS.md).
+In addition to the offline motion pipeline, I fully implemented the Web console and its server, job creation and status management, results page, and asset presentation. I also implemented the script integration, representation conversion, validation, playback, training/evaluation, and deployment adaptation that connect GVHMR/SMPL, GMR, ProtoMotions, and WBT. `g1-motion-pipeline/g1pipe/` is the orchestration layer, while the module-level scripts, configurations, and experiment records under `source/` are also part of this implementation contribution. `programs/` contains only standalone deployment and playback tools; it does not define the contribution boundary. See the [implementation contribution map](CONTRIBUTIONS.md).
 
 The 160D real-robot policy-observation adapter retains the ROS/DDS runtime structure, odometry handling, and diagnostic pattern from a 177D SMPL deployment reference, while using the 58D robot-reference semantics of a 154D reference. Command publication, gains, action scaling, joint mapping, and startup behavior remain deliberately separate.
 
